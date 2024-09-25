@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Yield Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #a7ffeb, #80deea);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #004d40;
+            font-size: 2.8rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+            max-width: 700px;
+            width: 100%;
+            margin: auto;
+            transition: transform 0.3s ease;
+        }
+
+        form:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00796b;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #b0bec5;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            border-color: #4db6ac;
+            box-shadow: 0 0 10px rgba(77, 182, 172, 0.3);
+            outline: none;
+        }
+
+        /* Submit Button */
+        input[type="submit"] {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #004d40;
+            transform: translateY(-3px);
+        }
+
+        input[type="submit"]:active {
+            transform: translateY(2px);
+        }
+
+        /* Responsive Design for smaller screens */
+        @media (max-width: 600px) {
+            form {
+                padding: 20px;
+            }
+
+            input[type="number"],
+            input[type="text"],
+            select {
+                font-size: 14px;
+            }
+
+            input[type="submit"] {
+                font-size: 16px;
+            }
+        }
+
+        /* Additional styles to enhance the form fields */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Crop Yield Prediction</h1>
+    <form action="/predict" method="post">
+        <label for="Crop_Year">Crop Year:</label>
+        <input type="number" id="Crop_Year" name="Crop_Year" step="any" required>
+
+        <label for="Area">Area:</label>
+        <input type="number" id="Area" name="Area" step="any" required>
+
+        <label for="Season">Season:</label>
+        <select id="Season" name="Season" required>
+            <option value="Whole Year">Whole Year</option>
+            <option value="Kharif">Kharif</option>
+            <option value="Rabi">Rabi</option>
+            <option value="Autumn">Autumn</option>
+            <option value="Summer">Summer</option>
+            <option value="Winter">Winter</option>
+        </select>
+
+        <label for="State">State:</label>
+        <select id="State" name="State" required>
+            <option value="Assam">Assam</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="West Bengal">West Bengal</option>
+            <option value="Puducherry">Puducherry</option>
+            <option value="Goa">Goa</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Sikkim">Sikkim</option>
+        </select>
+
+        <label for="Crop">Crop:</label>
+        <select id="Crop" name="Crop" required>
+            <option value="Arecanut">Arecanut</option>
+            <option value="Arhar/Tur">Arhar/Tur</option>
+            <option value="Castor seed">Castor seed</option>
+            <option value="Coconut">Coconut</option>
+            <option value="Cotton(lint)">Cotton (lint)</option>
+            <option value="Dry chillies">Dry chillies</option>
+            <option value="Gram">Gram</option>
+            <option value="Jute">Jute</option>
+            <option value="Linseed">Linseed</option>
+            <option value="Maize">Maize</option>
+            <option value="Mesta">Mesta</option>
+            <option value="Niger seed">Niger seed</option>
+            <option value="Onion">Onion</option>
+            <option value="Other Rabi pulses">Other Rabi pulses</option>
+            <option value="Potato">Potato</option>
+            <option value="Rapeseed & Mustard">Rapeseed & Mustard</option>
+            <option value="Rice">Rice</option>
+            <option value="Sesamum">Sesamum</option>
+            <option value="Small millets">Small millets</option>
+            <option value="Sugarcane">Sugarcane</option>
+            <option value="Sweet potato">Sweet potato</option>
+            <option value="Tapioca">Tapioca</option>
+            <option value="Tobacco">Tobacco</option>
+            <option value="Turmeric">Turmeric</option>
+            <option value="Wheat">Wheat</option>
+            <option value="Bajra">Bajra</option>
+            <option value="Black pepper">Black pepper</option>
+            <option value="Cardamom">Cardamom</option>
+            <option value="Coriander">Coriander</option>
+            <option value="Garlic">Garlic</option>
+            <option value="Ginger">Ginger</option>
+            <option value="Groundnut">Groundnut</option>
+            <option value="Horse-gram">Horse-gram</option>
+            <option value="Jowar">Jowar</option>
+            <option value="Ragi">Ragi</option>
+            <option value="Cashewnut">Cashewnut</option>
+            <option value="Banana">Banana</option>
+            <option value="Soyabean">Soyabean</option>
+            <option value="Barley">Barley</option>
+            <option value="Khesari">Khesari</option>
+            <option value="Masoor">Masoor</option>
+            <option value="Moong(Green Gram)">Moong (Green Gram)</option>
+            <option value="Other Kharif pulses">Other Kharif pulses</option>
+            <option value="Safflower">Safflower</option>
+            <option value="Sannhamp">Sannhamp</option>
+            <option value="Sunflower">Sunflower</option>
+            <option value="Urad">Urad</option>
+            <option value="Peas & beans (Pulses)">Peas & beans (Pulses)</option>
+            <option value="Other oilseeds">Other oilseeds</option>
+            <option value="Other Cereals">Other Cereals</option>
+            <option value="Cowpea(Lobia)">Cowpea (Lobia)</option>
+            <option value="Oilseeds total">Oilseeds total</option>
+            <option value="Guar seed">Guar seed</option>
+            <option value="Other Summer Pulses">Other Summer Pulses</option>
+            <option value="Moth">Moth</option>
+        </select>
+
+        <input type="submit" value="Predict">
+    </form>
+
+</body>
+
+</html>

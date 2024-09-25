@@ -1,0 +1,146 @@
+col=[ 'Crop_Year', 'Season', 'State',  'Production',
+       'Annual_Rainfall', 'Fertilizer', 'Pesticide', 'Yield','Area','Crop']
+
+X=df.drop('Yield',axis=1)
+y=df['Yield']
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42)
+
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+# Initialize the encoders and scalers
+ohe = OneHotEncoder(drop='first',sparse_output=False)
+scale = StandardScaler()
+
+# One-hot encode the categorical columns
+X_train_encoded = pd.DataFrame(ohe.fit_transform(X_train[['Season', 'State', 'Crop']]))
+X_test_encoded = pd.DataFrame(ohe.transform(X_test[['Season', 'State', 'Crop']]))
+
+
+X_train_pesticide = X_train[['Pesticide']].values.reshape(-1, 1)
+X_test_pesticide = X_test[['Pesticide']].values.reshape(-1, 1)
+
+
+
+# Scale the numeric columns
+X_train_scaled = pd.DataFrame(scale.fit_transform(X_train[['Crop_Year', 'Production', 'Annual_Rainfall', 'Fertilizer', 'Area']]))
+X_test_scaled = pd.DataFrame(scale.transform(X_test[['Crop_Year', 'Production', 'Annual_Rainfall', 'Fertilizer', 'Area']]))
+
+# Combine the processed columns with the remainder of the dataset
+X_train_processed = pd.concat([X_train_scaled, X_train_encoded, X_train[['Pesticide']].reset_index(drop=True)], axis=1)
+X_test_processed = pd.concat([X_test_scaled, X_test_encoded, X_test[['Pesticide']].reset_index(drop=True)], axis=1)
+
+from sklearn.linear_model import LinearRegression,Lasso, Ridge
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_absolute_error, r2_score, accuracy_score
+models = {
+    'Linear Regression': LinearRegression(),
+    'Lasso' : Lasso(),
+    'Ridge' : Ridge(),
+    'Decision Tree': DecisionTreeRegressor(),
+    'KNN': KNeighborsRegressor(),
+}
+
+# Debugging: Check the structure and data types
+print("X_train_processed shape:", X_train_processed.shape)
+print("X_test_processed shape:", X_test_processed.shape)
+print("X_train_processed data type:", (X_train_processed.dtypes))
+print("X_test_processed data type:", (X_test_processed.dtypes))
+
+
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+import numpy as np
+from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
+
+# Initialize the encoders and scalers
+ohe = OneHotEncoder(drop='first', sparse_output=False,handle_unknown='ignore')  # Use sparse_output instead of sparse
+scale = StandardScaler()
+
+# One-hot encode the categorical columns
+X_train_encoded = ohe.fit_transform(X_train[['Season', 'State', 'Crop']])
+X_test_encoded = ohe.transform(X_test[['Season', 'State', 'Crop']])
+
+# Scale the numeric columns
+X_train_scaled = scale.fit_transform(X_train[['Crop_Year', 'Production', 'Annual_Rainfall', 'Fertilizer', 'Area']])
+X_test_scaled = scale.transform(X_test[['Crop_Year', 'Production', 'Annual_Rainfall', 'Fertilizer', 'Area']])
+
+# Convert the remainder column to numpy and reshape to 2D
+X_train_pesticide = X_train[['Pesticide']].values.reshape(-1, 1)
+X_test_pesticide = X_test[['Pesticide']].values.reshape(-1, 1)
+
+# Concatenate all parts into a single numpy array
+X_train_processed = np.hstack([X_train_scaled, X_train_encoded, X_train_pesticide])
+X_test_processed = np.hstack([X_test_scaled, X_test_encoded, X_test_pesticide])
+
+# Ensure all parts are dense and of the correct shape and type
+print("X_train_processed shape:", X_train_processed.shape)
+print("X_test_processed shape:", X_test_processed.shape)
+print("X_train_processed dtype:", X_train_processed.dtype)
+print("X_test_processed dtype:", X_test_processed.dtype)
+
+# Models dictionary
+models = {
+    'Linear Regression': LinearRegression(),
+    'Lasso': Lasso(),
+    'Ridge': Ridge(),
+    'Decision Tree': DecisionTreeRegressor(),
+    'KNN': KNeighborsRegressor(),
+}
+
+# Fit models and evaluate
+for name, md in models.items():
+    md.fit(X_train_processed, y_train)
+    y_pred = md.predict(X_test_processed)
+    print(f"{name}: MAE: {mean_absolute_error(y_test, y_pred)} Score: {r2_score(y_test, y_pred)}")
+
+dtr = DecisionTreeRegressor()
+dtr.fit(X_train_processed,y_train)
+
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.tree import DecisionTreeRegressor
+from sqlalchemy import PickleType
+
+# Initialize preprocessors
+ohe = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+scale = StandardScaler()
+
+# Fit preprocessors on training data
+ohe.fit(X_train[['Season', 'State', 'Crop']])
+scale.fit(X_train[['Crop_Year', 'Annual_Rainfall', 'Fertilizer', 'Pesticide', 'Area']])
+
+# Example model fitting
+dtr = DecisionTreeRegressor()
+X_train_processed = np.hstack([scale.transform(X_train[['Crop_Year', 'Annual_Rainfall', 'Fertilizer', 'Pesticide', 'Area']]), ohe.transform(X_train[['Season', 'State', 'Crop']])])
+dtr.fit(X_train_processed, y_train)
+
+
+def prediction(Crop_Year, Annual_Rainfall, Fertilizer, Pesticide, Area, Season, State, Crop):
+    # Prepare the numeric features
+    numeric_features = np.array([[Crop_Year, Annual_Rainfall, Fertilizer, Pesticide, Area]], dtype=float)
+    
+    # Prepare the categorical features
+    categorical_features = np.array([[Season, State, Crop]])
+    
+    # Scale numeric features
+    scaled_numeric_features = scale.transform(numeric_features)
+    
+    # One-hot encode categorical features
+    encoded_categorical_features = ohe.transform(categorical_features)
+    
+    # Combine all features
+    transform_features = np.hstack([scaled_numeric_features, encoded_categorical_features])
+    
+    # Predict using the trained model
+    predicted_yield = dtr.predict(transform_features).reshape(-1, 1)
+    return predicted_yield[0][0]
+
+import pickle
+pickle.dump(dtr,open("dtr.pkl","wb"))
+
